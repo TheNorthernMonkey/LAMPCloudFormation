@@ -111,4 +111,13 @@ Resources:
 #     Properties:
 #       VpcId: {Ref: WPProdVPC}
 #       InternetGatewayId: {Ref: PrimaryCG} 
-       
+
+# deploy 1st server
+
+  ServerInstance1:
+    Type : AWS::EC2::Instance
+    Properties:
+      InstanceType: t4g.micro
+      AvailabilityZone: eu-west-1a
+      SubnetId: {Ref: IntSubnet1}
+      ImageId: ami-08eae9b2b97caf274 
