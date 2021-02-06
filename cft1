@@ -26,7 +26,7 @@ Resources:
   IntSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: eu-central-1a
+      AvailabilityZone: eu-west-1a
       VpcId: {Ref: WPProdVPC}
       CidrBlock: 10.1.0.0/23
       MapPublicIpOnLaunch: False
@@ -36,7 +36,7 @@ Resources:
   IntSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: eu-central-1b
+      AvailabilityZone: eu-west-1b
       VpcId: {Ref: WPProdVPC}
       CidrBlock: 10.1.2.0/23
       MapPublicIpOnLaunch: False
@@ -46,7 +46,7 @@ Resources:
   ExtSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: eu-central-1a
+      AvailabilityZone: eu-west-1a
       VpcId: {Ref: WPProdVPC}
       CidrBlock: 10.1.8.0/23
       MapPublicIpOnLaunch: True
@@ -56,7 +56,7 @@ Resources:
   ExtSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: eu-central-1b
+      AvailabilityZone: eu-west-1b
       VpcId: {Ref: WPProdVPC}
       CidrBlock: 10.1.10.0/23
       MapPublicIpOnLaunch: True
@@ -74,16 +74,7 @@ Resources:
     Properties: 
       RouteTableId: {Ref: IntRouteTable}
       SubnetId: {Ref: IntSubnet2}
-  RouteTableAssociate3:       
-    Type: "AWS::EC2::SubnetRouteTableAssociation"
-    Properties: 
-      RouteTableId: {Ref: IntRouteTable}
-      SubnetId: {Ref: IntSubnet3} 
-  RouteTableAssociate4:       
-    Type: "AWS::EC2::SubnetRouteTableAssociation"
-    Properties: 
-      RouteTableId: {Ref: IntRouteTable}
-      SubnetId: {Ref: IntSubnet4}
+
  
   InternetGateway:
     Type: "AWS::EC2::InternetGateway"
