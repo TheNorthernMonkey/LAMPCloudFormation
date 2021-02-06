@@ -111,4 +111,36 @@ Resources:
 #     Properties:
 #       VpcId: {Ref: WPProdVPC}
 #       InternetGatewayId: {Ref: PrimaryCG} 
-       
+
+
+# Security Group Creation
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http, https and ssh to client host
+      VpcId: {Ref: WPProdVPC}
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+
+# deploy 1st server
+
+  ServerInstance1:
+    Type : AWS::EC2::Instance
+    Properties:
+      InstanceType: t4g.micro
+      AvailabilityZone: eu-west-1a
+      SubnetId: {Ref: IntSubnet1}
+      ImageId: ami-08eae9b2b97caf274
+      SecurityGroupIds: [ {Ref: WebSecurityGroup} ]
