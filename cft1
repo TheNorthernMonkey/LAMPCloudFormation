@@ -1,4 +1,11 @@
+
+Parameters:
+  EnvironmentName: 
+    Type: String
+    Default: myvpc
+
 Resources:
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -6,5 +13,12 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-      - Key: Name
-        Value:  !Join ['', [!Ref "AWS::StackName", "-VPC" ]]
+        - Key: Name
+          Value: !Ref EnvironmentName
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
