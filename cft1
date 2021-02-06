@@ -1,24 +1,123 @@
 
-Parameters:
-  EnvironmentName: 
-    Type: String
-    Default: myvpc
-
 Resources:
-
-  VPC:
-    Type: AWS::EC2::VPC
+  WPProdVPC:
+     Type: AWS::EC2::VPC
+     Properties:
+       CidrBlock: 10.1.0.0/20
+       Tags:
+       - Key: Name
+         Value: WPProdVPC
+         
+  IntRouteTable:
+     Type: "AWS::EC2::RouteTable"
+     Properties: 
+       VpcId: {Ref: WPProdVPC}
+       Tags:
+       - Key: Name
+         Value: IntRouteTable
+  ExtRouteTable:
+     Type: "AWS::EC2::RouteTable"
+     Properties: 
+       VpcId: {Ref: WPProdVPC}
+       Tags:
+       - Key: Name
+         Value: ExtRouteTable
+           
+  IntSubnet1:
+    Type: AWS::EC2::Subnet
     Properties:
-      CidrBlock: 10.1.0.0/16
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
+      AvailabilityZone: eu-central-1a
+      VpcId: {Ref: WPProdVPC}
+      CidrBlock: 10.1.0.0/23
+      MapPublicIpOnLaunch: False
       Tags:
-        - Key: Name
-          Value: !Ref EnvironmentName
-
+       - Key: Name
+         Value: IntSubnet1
+  IntSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: eu-central-1b
+      VpcId: {Ref: WPProdVPC}
+      CidrBlock: 10.1.2.0/23
+      MapPublicIpOnLaunch: False
+      Tags:
+       - Key: Name
+         Value: IntSubnet2  
+  ExtSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: eu-central-1a
+      VpcId: {Ref: WPProdVPC}
+      CidrBlock: 10.1.8.0/23
+      MapPublicIpOnLaunch: True
+      Tags:
+       - Key: Name
+         Value: ExtSubnet1
+  ExtSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: eu-central-1b
+      VpcId: {Ref: WPProdVPC}
+      CidrBlock: 10.1.10.0/23
+      MapPublicIpOnLaunch: True
+      Tags:
+       - Key: Name
+         Value: ExtSubnet2
+         
+  RouteTableAssociate1:       
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: {Ref: IntRouteTable}
+      SubnetId: {Ref: IntSubnet1} 
+  RouteTableAssociate2:       
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: {Ref: IntRouteTable}
+      SubnetId: {Ref: IntSubnet2}
+  RouteTableAssociate3:       
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: {Ref: IntRouteTable}
+      SubnetId: {Ref: IntSubnet3} 
+  RouteTableAssociate4:       
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties: 
+      RouteTableId: {Ref: IntRouteTable}
+      SubnetId: {Ref: IntSubnet4}
+ 
   InternetGateway:
-    Type: AWS::EC2::InternetGateway
+    Type: "AWS::EC2::InternetGateway"
+  
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      Tags:
-        - Key: Name
-          Value: !Ref EnvironmentName
+      VpcId: {Ref: WPProdVPC}
+      InternetGatewayId: {Ref: InternetGateway} 
+
+#   Nat gateway is commented out to create zero cost VPC
+#   NATGateway:
+#     Type: AWS::EC2::NatGateway
+#     Properties:
+#       AllocationId:
+#         Fn::GetAtt:
+#         - NatEIP
+#         - AllocationId
+#       SubnetId: {Ref: ExtSubnet1}
+#   NatEIP:
+#     Type: AWS::EC2::EIP
+#     Properties:
+#       Domain: WPProdvpc      
+# 
+#   PrimaryCG: 
+#     Type: "AWS::EC2::CustomerGateway"
+#     Properties: 
+#       Type: ipsec.1
+#       BgpAsn: 65000
+#       IpAddress: 1.2.3.4
+#       
+#   AttachCustGateway:
+#     Type: AWS::EC2::VPCGatewayAttachment
+#     Properties:
+#       VpcId: {Ref: WPProdVPC}
+#       InternetGatewayId: {Ref: PrimaryCG} 
+       
